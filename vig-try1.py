@@ -7,7 +7,7 @@
 import random, sys, fileinput
 
 
-LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+LETTERS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 def main():
     # This text can be copy/pasted from https://invpy.com/vigenereCipher.py:
@@ -32,22 +32,21 @@ def main():
     print(myMode)
 
     #pjc - loop through each plaintext from file1
+    ccount = 0
     for i in test1_text:
-         #print(i)
-         myMessage = i
-
-         if myMode == 'encrypt':
-             translated = encryptMessage(myKey, myMessage)
-         elif myMode == 'decrypt':
-             translated = decryptMessage(myKey, myMessage)
-
-         print('Original message:')
-         print(myMessage)
-         print('%sed message:' % (myMode.title()))
-         print(translated)
-         #pyperclip.copy(translated)
-         print()
-         #print('The message has been copied to the clipboard.')
+         ccount = ccount + 1
+         if ccount == 3:
+             ccount = 1
+             myMessage = i
+             if myMode == 'encrypt':
+                 translated = encryptMessage(myKey, myMessage)
+             elif myMode == 'decrypt':
+                 translated = decryptMessage(myKey, myMessage)
+             print('Original message:')
+             print(myMessage)
+             print('%sed message:' % (myMode.title()))
+             print(translated)
+             print()
 
 #This function loads the 2 dictionary files
 def load_dict(fname):
