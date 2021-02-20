@@ -47,6 +47,7 @@ def main():
                  translated = decryptMessage(myKey, myMessage)
              print('Original message:')
              print(myMessage)
+             print()
              print('%sed message:' % (myMode.title()))
              print(translated)
              print()
