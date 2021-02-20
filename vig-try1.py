@@ -5,7 +5,7 @@
 #import pyperclip
 
 import random, sys, fileinput
-
+import numpy as np
 
 #LETTERS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 LETTERS = ' abcdefghijklmnopqrstuvwxyz'
@@ -13,6 +13,7 @@ LETTERS = ' abcdefghijklmnopqrstuvwxyz'
 def main():
     # This text can be copy/pasted from https://invpy.com/vigenereCipher.py:
 
+    #TEST 1 - CREATE CIPHER TEXT for 5 PLAIN TEXT in FILE1
     #pjc - load 5 plaintext for test1
     fname = "plaintext_dictionary_test1.txt"
     test1_text = load_dict(fname)
@@ -32,6 +33,7 @@ def main():
     print('Mode:')
     print(myMode)
 
+    print("***** TEST 1 *****")
     #pjc - loop through each plaintext from file1
     ccount = 0
     for i in test1_text:
@@ -49,23 +51,58 @@ def main():
              print(translated)
              print()
 
+    #TEST 2 - GENERATE CIPHER TEXT for L=500 and v=40
+    fname = "word_dictionary_test2.txt"
+    dict2_words = load_dict(fname)
+    #print("Dictionary 2 words:")
+    #print(dict2_words)
+
+    #pick 40 words randomly
+    #test2_text = ['word'] * 40
+    #print(test2_text)
+    text_ran = np.random.randint(low=1, high=40, size=(40,))
+    print(text_ran)
+
+    test2_text = ""
+    t2space = " "
+    for i in text_ran:
+        #print(i)
+        test2_text += dict2_words[i]
+        test2_text += t2space
+
+    #print(test2_text)
+    print()
+    print("***** TEST 2 *****")
+    myMessage = test2_text
+    if myMode == 'encrypt':
+        translated = encryptMessage(myKey, myMessage)
+    elif myMode == 'decrypt':
+        translated = decryptMessage(myKey, myMessage)
+
+    print('Test 2 Plaintext message:')
+    print(myMessage)
+    print()
+    print('%sed message:' % (myMode.title()))
+    print(translated)
+    print()
+
+
+
+
+
+
 #This function loads the 2 dictionary files
 def load_dict(fname):
-    fname1 = "plaintext_dictionary_test1.txt"
-    fname2 = "word_dictionary_test2.txt"
+    #fname1 = "plaintext_dictionary_test1.txt"
+    #fname2 = "word_dictionary_test2.txt"
     dict1_array = []
-    dict2_array = []
-    with open(fname1) as f:
+    #dict2_array = []
+    with open(fname) as f:
         for line in f:
             if line != "\n":
                 #dict1_array.append(line)
                 dict1_array.append(line.rstrip('\n'))
         #print(dict1_array)
-    with open(fname2) as f:
-        for line in f:
-            #dict2_array.append(line)
-            dict2_array.append(line.rstrip('\n'))
-        #print(dict2_array)
     return dict1_array
 
 def encryptMessage(key, message):
