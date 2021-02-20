@@ -7,7 +7,8 @@
 import random, sys, fileinput
 
 
-LETTERS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+#LETTERS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+LETTERS = ' abcdefghijklmnopqrstuvwxyz'
 
 def main():
     # This text can be copy/pasted from https://invpy.com/vigenereCipher.py:
@@ -79,10 +80,10 @@ def translateMessage(key, message, mode):
     translated = [] # Stores the encrypted/decrypted message string.
 
     keyIndex = 0
-    key = key.upper()
+    key = key.lower()
 
     for symbol in message: # Loop through each symbol in message.
-        num = LETTERS.find(symbol.upper())
+        num = LETTERS.find(symbol.lower())
         if num != -1: # -1 means symbol.upper() was not found in LETTERS.
             if mode == 'encrypt':
                 num += LETTERS.find(key[keyIndex]) # Add if encrypting.
