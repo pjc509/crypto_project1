@@ -8,7 +8,7 @@ import vigenereCipher
 #LETTERS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 LETTERS = ' abcdefghijklmnopqrstuvwxyz'
 SILENT_MODE = False # If set to True, program doesn't print anything.
-NUM_MOST_FREQ_LETTERS = 4 # Attempt this many letters per subkey.
+NUM_MOST_FREQ_LETTERS = 10 # Attempt this many letters per subkey.
 MAX_KEY_LENGTH = 3 # Will not attempt keys longer than this.
 NONLETTERS_PATTERN = re.compile('[^a-z]')
 
@@ -30,9 +30,16 @@ def main():
     #pjc - enter ciphertext here with key = xfu
     #ciphertext = """jgnrxzpfvqzzkzcltvifxl lqybfvucgoizfbymidufxikducgoizfbymidupbilvmxnzyxebtzafmtuimyu gyddu ugz mqohdfjeunliijvipku gyddupniokfftzpflyiz uooyzx h uhsklqowikucuiqlvirmxohq cqopbtzpyujkgmncpfxl lqybfvuyznbtnfuhyrucgoizfbymidumxiqxoakyxohakffiv du ugz mqohdfxyzxeklxvlbymbjuzkntkzkfyfygfymfazxvllzlrjzafxe nbju gn nzofbbxgbtzrzc yuckloozpf bxlfkmxlvrrnikmprsxhzekfafjouno ybjuaomjompopbfgbsjeomx"""
 
-    ciphertext = """ gamvfcgrrqrbyprvfpnlxbrftbyxilsz pzftdffxltvfo pzfipfpnlxbrftbyxilsz pzftdfokmxbypfyzqkkzfukgifjdozikxjbrfsfzftdfyzqkkzfukgifmnlzlilsmupkxokzroqoskkkpyxhbnbrafculzcgirpfmxlvlybyxveuqu ujvlybfz oyyxvfzkqbbkkfaook zfukyxokzroqoskkkpyxgqzbtqoltyrxokjbrfiyivfjgq okpf nrzbjxvouqxrjbjxiyz nbxxiyjddxsvxqrbf nrzbjxsfybxyhfrfgxvouqxrjbjxxbvokpyxjfxbiqoltpfculzcgirpfpblumyxsbsmnfyxsyzrxbyx"""
+    #pjc - enter ciphertext here with key = xf
+    #ciphertext = """ gamvfcgrrqrbyprvfpnlxbrftbyxilsz pzftdffxltvfo pzfipfpnlxbrftbyxilsz pzftdfokmxbypfyzqkkzfukgifjdozikxjbrfsfzftdfyzqkkzfukgifmnlzlilsmupkxokzroqoskkkpyxhbnbrafculzcgirpfmxlvlybyxveuqu ujvlybfz oyyxvfzkqbbkkfaook zfukyxokzroqoskkkpyxgqzbtqoltyrxokjbrfiyivfjgq okpf nrzbjxvouqxrjbjxiyz nbxxiyjddxsvxqrbf nrzbjxsfybxyhfrfgxvouqxrjbjxxbvokpyxjfxbiqoltpfculzcgirpfpblumyxsbsmnfyxsyzrxbyx"""
 
+    #pjc - enter ciputertext for first text with key = xf
+    ciphertext = """ gzulybyxsbrqjlbkyxhfmjurzefjghktuoqxliomvbyqfkkrzogiowkoyxmfvmkafj ikxgkzfzekqo giffsmkooyrpf goujfjgpu nfyjfpzyoofokqyftyfa irkkpyxgakpzbf uoyymbfpgogzgkjxvoujkkgakoyxmbyqgqoltyrxsytp bzrjbfcodfokaxbypfmxbmysbfzuoyezpfmgojltbxxxbllxdkpfokc qgqoltpf gikkjyrxslgkokmxjlmdkokifakkjouiuddxmlabxkyxxfhltriikfixifx  jy xfvqoltpfokyypojoigqokmxsyieokowkxxbhroijftdfjkwiyrxli lxby kafytqkmkk izpfzryihyjoqnxiltpzyt kxlrxlxbyxiexltfiikoyxuskorfkxnlkoyxpyhzokmxxbyfmkkofn yxqo yxvlrfyekoyxsyriutfeuskirftdf n"""
 
+    #pjc - load 5 plaintext from dictionary for test1
+    #fname = "plaintext_dictionary_test1.txt"
+    #test1_text = load_dict(fname)
+    #print(test1_text)
 
     print("TEST cipher text:")
     print(ciphertext)
@@ -47,6 +54,20 @@ def main():
         #pyperclip.copy(hackedMessage)
     else:
         print('Failed to hack encryption.')
+
+#This function loads the 2 dictionary files
+def load_dict(fname):
+    #fname1 = "plaintext_dictionary_test1.txt"
+    #fname2 = "word_dictionary_test2.txt"
+    dict1_array = []
+    #dict2_array = []
+    with open(fname) as f:
+        for line in f:
+            if line != "\n":
+                #dict1_array.append(line)
+                dict1_array.append(line.rstrip('\n'))
+        #print(dict1_array)
+    return dict1_array
 
 
 def findRepeatSequencesSpacings(message):
@@ -177,6 +198,11 @@ def getNthSubkeysLetters(nth, keyLength, message):
 
 
 def attemptHackWithKeyLength(ciphertext, mostLikelyKeyLength):
+    #pjc - retrieve plain text options from dictionary 1
+    fname = "plaintext_dictionary_test1.txt"
+    test1_text = load_dict(fname)
+    #print(test1_text)
+
     # Determine the most likely letters for each letter in the key:
     ciphertextUp = ciphertext.lower()
     # allFreqScores is a list of mostLikelyKeyLength number of lists.
@@ -221,10 +247,15 @@ def attemptHackWithKeyLength(ciphertext, mostLikelyKeyLength):
         decryptedText = vigenereCipher.decryptMessage(possibleKey, ciphertextUp)
 
         #pjc - check test case
-        #if possibleKey == 'ab':
-        #    print("key=ab")
-        #    print(decryptedText)
-        #    print()
+        if possibleKey == 'xf':
+            print('Cipher Text:')
+            print(ciphertextUp)
+            #print("key=")
+            #print(possibleKey)
+            print()
+            #print('Plain Text:')
+            #print(decryptedText)
+            #print()
 
         if detectEnglish.isEnglish(decryptedText):
             # Set the hacked ciphertext to the original casing:
@@ -235,6 +266,18 @@ def attemptHackWithKeyLength(ciphertext, mostLikelyKeyLength):
                 else:
                     origCase.append(decryptedText[i].lower())
             decryptedText = ''.join(origCase)
+
+            #pjc - add check if decrypt test matches dictionary 1
+            text_title1 = ""
+            for i in test1_text:
+                if i == decryptedText:
+                    print('Match with dictionary 1 text:')
+                    print(text_title1)
+                    print(decryptedText)
+                    print()
+                    return decryptedText
+                text_title1= i
+
 
             # Check with user to see if the key has been found:
             print('Possible encryption hack with key %s:' % (possibleKey))

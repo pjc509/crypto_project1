@@ -20,7 +20,7 @@ def main():
 
     #pjc - set key for now, build logic to generate key to match
     #      proposed scheduling alorithm
-    myKey = 'ab'
+    myKey = 'xf'
 
     #pjc - create sample cipher text for each plaintext
     myMode = 'encrypt' # Set to either 'encrypt' or 'decrypt'.
@@ -81,6 +81,7 @@ def main():
         translated = decryptMessage(myKey, myMessage)
 
     print('Test 2 Plaintext message:')
+    print(myKey)
     print(myMessage)
     print()
     print('%sed message:' % (myMode.title()))
