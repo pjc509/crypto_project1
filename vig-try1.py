@@ -20,7 +20,7 @@ def main():
 
     #pjc - set key for now, build logic to generate key to match
     #      proposed scheduling alorithm
-    myKey = 'abcdefghij'
+    myKey = 'ab'
 
     #pjc - create sample cipher text for each plaintext
     myMode = 'encrypt' # Set to either 'encrypt' or 'decrypt'.
@@ -87,9 +87,20 @@ def main():
     print(translated)
     print()
 
+    print("***** TEST 3 - DECRYPT *****")
+    myMessage = translated
+    myMode = 'decrypt'
+    if myMode == 'encrypt':
+        translated = encryptMessage(myKey, myMessage)
+    elif myMode == 'decrypt':
+        translated = decryptMessage(myKey, myMessage)
 
-
-
+    #print('Test 2 Cipher text:')
+    #print(myMessage)
+    #print()
+    print('%sed message:' % (myMode.title()))
+    print(translated)
+    print()
 
 
 #This function loads the 2 dictionary files
