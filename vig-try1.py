@@ -131,21 +131,33 @@ def translateMessage(key, message, mode):
     keyIndex = 0
     key = key.lower()
 
+    #print("test:")
+    #print(message)
+    #print(mode)
+    #print(key)
+    #print()
     for symbol in message: # Loop through each symbol in message.
         num = LETTERS.find(symbol.lower())
+        #print(symbol)
+        #print(num)
         if num != -1: # -1 means symbol.upper() was not found in LETTERS.
             if mode == 'encrypt':
                 num += LETTERS.find(key[keyIndex]) # Add if encrypting.
             elif mode == 'decrypt':
                 num -= LETTERS.find(key[keyIndex]) # Subtract if decrypting.
 
+            #print(num)
             num %= len(LETTERS) # Handle any wraparound.
+            #print(num)
 
             # Add the encrypted/decrypted symbol to the end of translated:
             if symbol.isupper():
                 translated.append(LETTERS[num])
             elif symbol.islower():
                 translated.append(LETTERS[num].lower())
+            else:
+                translated.append(LETTERS[num].lower())
+
 
             keyIndex += 1 # Move to the next letter in the key.
             if keyIndex == len(key):
@@ -154,6 +166,8 @@ def translateMessage(key, message, mode):
             # Append the symbol without encrypting/decrypting.
             translated.append(symbol)
 
+    #print(translated)
+    #print()
     return ''.join(translated)
 
 
