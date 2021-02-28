@@ -61,9 +61,9 @@ def main():
     print(calc_key)
     print("key:")
     print(key)
-    zzz = principal_period(calc_key)
+    match_key = principal_period(calc_key)
     print("match_key:")
-    print(zzz)
+    print(match_key)
 
 def principal_period(s):
     i = (s+s).find(s, 1, -1)
