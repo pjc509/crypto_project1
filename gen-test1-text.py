@@ -8,8 +8,13 @@ import random
 from random import randrange
 import string
 import numpy as np
+import itertools, re
 
 LETTERS = ' abcdefghijklmnopqrstuvwxyz'
+NONLETTERS_PATTERN = re.compile('[^A-Z]')
+NUM_MOST_FREQ_LETTERS = 4 # Attempt this many letters per subkey.
+MAX_KEY_LENGTH = 20 # Will not attempt keys longer than this.
+
 letter_key_values = {" ":0,"a":1,"b":2,"c":3,"d":4,"e":5,"f":6,"g":7,"h":8,"i":9,"j":10,"k":11,
 "l":12,"m":13,"n":14,"o":15,"p":16,"q":17,"r":18,"s":19,"t":20,"u":21,"v":22,"w":23,"x":24,"y":25,"z":26}
 letter_key = [" ","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
@@ -50,6 +55,19 @@ def main():
     print(translated)
     print()
 
+    #test repeat sequence in calculated key
+    calc_key = decryptMessage(test1_text[u_txt], translated)
+    print("Decrypted key:")
+    print(calc_key)
+    print("key:")
+    print(key)
+    zzz = principal_period(calc_key)
+    print("match_key:")
+    print(zzz)
+
+def principal_period(s):
+    i = (s+s).find(s, 1, -1)
+    return None if i == -1 else s[:i]
 
 def generate_random_key_test1(t):
     #default random key
@@ -130,6 +148,109 @@ def translateMessage(key, message, mode):
 
     return ''.join(translated)
 
+def findRepeatSequencesSpacings(message):
+    # Goes through the message and finds any 3 to 5 letter sequences
+    # that are repeated. Returns a dict with the keys of the sequence and
+    # values of a list of spacings (num of letters between the repeats).
+
+    # Use a regular expression to remove non-letters from the message:
+    message = NONLETTERS_PATTERN.sub('', message.upper())
+
+    # Compile a list of seqLen-letter sequences found in the message:
+    seqSpacings = {} # Keys are sequences, values are lists of int spacings.
+    for seqLen in range(4, 20):
+        for seqStart in range(len(message) - seqLen):
+            # Determine what the sequence is, and store it in seq:
+            seq = message[seqStart:seqStart + seqLen]
+
+            # Look for this sequence in the rest of the message:
+            for i in range(seqStart + seqLen, len(message) - seqLen):
+                if message[i:i + seqLen] == seq:
+                    # Found a repeated sequence.
+                    if seq not in seqSpacings:
+                        seqSpacings[seq] = [] # Initialize a blank list.
+
+                    # Append the spacing distance between the repeated
+                    # sequence and the original sequence:
+                    seqSpacings[seq].append(i - seqStart)
+    return seqSpacings
+
+def kasiskiExamination(ciphertext):
+    # Find out the sequences of 3 to 5 letters that occur multiple times
+    # in the ciphertext. repeatedSeqSpacings has a value like:
+    # {'EXG': [192], 'NAF': [339, 972, 633], ... }
+    repeatedSeqSpacings = findRepeatSequencesSpacings(ciphertext)
+
+    # (See getMostCommonFactors() for a description of seqFactors.)
+    seqFactors = {}
+    for seq in repeatedSeqSpacings:
+        seqFactors[seq] = []
+        for spacing in repeatedSeqSpacings[seq]:
+            seqFactors[seq].extend(getUsefulFactors(spacing))
+
+    # (See getMostCommonFactors() for a description of factorsByCount.)
+    factorsByCount = getMostCommonFactors(seqFactors)
+
+    # Now we extract the factor counts from factorsByCount and
+    # put them in allLikelyKeyLengths so that they are easier to
+    # use later:
+    allLikelyKeyLengths = []
+    for twoIntTuple in factorsByCount:
+        allLikelyKeyLengths.append(twoIntTuple[0])
+
+    return allLikelyKeyLengths
+
+def getUsefulFactors(num):
+    # Returns a list of useful factors of num. By "useful" we mean factors
+    # less than MAX_KEY_LENGTH + 1 and not 1. For example,
+    # getUsefulFactors(144) returns [2, 3, 4, 6, 8, 9, 12, 16]
+
+    if num < 2:
+        return [] # Numbers less than 2 have no useful factors.
+
+    factors = [] # The list of factors found.
+
+    # When finding factors, you only need to check the integers up to
+    # MAX_KEY_LENGTH.
+    for i in range(2, MAX_KEY_LENGTH + 1): # Don't test 1: it's not useful.
+        if num % i == 0:
+            factors.append(i)
+            otherFactor = int(num / i)
+            if otherFactor < MAX_KEY_LENGTH + 1 and otherFactor != 1:
+                factors.append(otherFactor)
+    return list(set(factors)) # Remove duplicate factors.
+
+def getMostCommonFactors(seqFactors):
+    # First, get a count of how many times a factor occurs in seqFactors:
+    factorCounts = {} # Key is a factor, value is how often it occurs.
+
+    # seqFactors keys are sequences, values are lists of factors of the
+    # spacings. seqFactors has a value like: {'GFD': [2, 3, 4, 6, 9, 12,
+    # 18, 23, 36, 46, 69, 92, 138, 207], 'ALW': [2, 3, 4, 6, ...], ...}
+    for seq in seqFactors:
+        factorList = seqFactors[seq]
+        for factor in factorList:
+            if factor not in factorCounts:
+                factorCounts[factor] = 0
+            factorCounts[factor] += 1
+
+    # Second, put the factor and its count into a tuple, and make a list
+    # of these tuples so we can sort them:
+    factorsByCount = []
+    for factor in factorCounts:
+        # Exclude factors larger than MAX_KEY_LENGTH:
+        if factor <= MAX_KEY_LENGTH:
+            # factorsByCount is a list of tuples: (factor, factorCount)
+            # factorsByCount has a value like: [(3, 497), (2, 487), ...]
+            factorsByCount.append( (factor, factorCounts[factor]) )
+
+    # Sort the list by the factor count:
+    factorsByCount.sort(key=getItemAtIndexOne, reverse=True)
+
+    return factorsByCount
+
+def getItemAtIndexOne(items):
+    return items[1]
 
 
 
