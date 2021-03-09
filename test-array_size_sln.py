@@ -50,7 +50,7 @@ def main():
     #print(test2_text)
 
     #Pick type of cipher text to generate
-    print("Generate cipher text for Test1 or Test2")
+    print("Generate Plain text based on Test1 or Test2")
     t_type = int(input("1-Test1, 2-Test2: "))
     if t_type<1: t=1
     if t_type>2: t=1
@@ -63,12 +63,12 @@ def main():
         if u_txt>5: u_txt=5
 
     #Enter length of key
-    t = int(input("Enter length of key: "))
+    t = int(input("Enter length of key(4-20): "))
     if t<4: t=4
     if t>20: t=20
 
     #Enter type of scheduling alorithm
-    print("Type of scheduling alorithm")
+    print("Type of scheduling alorithm(only 1 works)")
     t_algo = int(input("1-random, 2-test1, 3-test2, 4-with random: "))
     if t_algo<1: t=1
     if t_algo>4: t=4
